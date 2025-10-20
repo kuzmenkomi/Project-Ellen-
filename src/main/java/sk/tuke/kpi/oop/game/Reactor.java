@@ -1,7 +1,13 @@
 package sk.tuke.kpi.oop.game;
 
+import org.jetbrains.annotations.NotNull;
+import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
+import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
+import sk.tuke.kpi.oop.game.tools.Hammer;
+import sk.tuke.kpi.oop.game.tools.Mjolnir;
 
 public class Reactor extends AbstractActor {
     private int temperature;
@@ -56,7 +62,7 @@ public class Reactor extends AbstractActor {
         updateAnimation();
     }
 
-    private void updateAnimation() {
+    public void updateAnimation() {
         Animation upperDamageAnimation = damage >= 66 ? BrokenAnimation : null;
         Animation damageAnimation = damage < 33 ? NormalAnimation : (upperDamageAnimation == null ? HotAnimation : upperDamageAnimation);
         Animation finalAnimation = !running ? OffAnimation : damageAnimation;
@@ -100,20 +106,24 @@ public class Reactor extends AbstractActor {
         }
     }
 
-    public void repairWith(Hammer hammer) {
-        if (hammer == null || damage <= 0 || damage >= 100) return;
+    public void repairWith(Object object) {
+        if (object != null && damage > 0 && damage < 100) {
+            int previousDamage = damage;
+            damage = Math.max(damage - 50, 0);
 
-        hammer.use();
+            if (object instanceof Hammer) {
+                ((Hammer) object).use();
+            } else if (object instanceof Mjolnir) {
+                ((Mjolnir) object).use();
+            }
 
-        damage -= 50;
-        if (damage < 0) damage = 0;
+            int auxiliaryDamage = previousDamage - 50;
+            int newTemperature = 2000 + (auxiliaryDamage * 40);
 
-        int newTemp = (int) ((6000 * damage) / 100);
-        if (newTemp < temperature) {
-            temperature = newTemp;
+            if (newTemperature < temperature) {
+                temperature = newTemperature;
+            }
         }
-
-        updateElectricityFlow();
         updateAnimation();
     }
 
@@ -121,4 +131,13 @@ public class Reactor extends AbstractActor {
         return temperature;
     }
 
+    public boolean isLaunched() {
+        return running && ReactorLight != null && ReactorLight.getOn() && ReactorLight.getPower();
+    }
+
+    @Override
+    public void addedToScene(@NotNull Scene scene) {
+        super.addedToScene(scene);
+        scene.scheduleAction(new PerpetualReactorHeating(1), this);
+    }
 }

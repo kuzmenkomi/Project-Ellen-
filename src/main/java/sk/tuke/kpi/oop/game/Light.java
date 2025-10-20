@@ -20,6 +20,14 @@ public class Light extends AbstractActor {
         setAnimation(lightOffAnimation);
     }
 
+    public boolean getPower() {
+        return isPowered;
+    }
+
+    public boolean getOn() {
+        return isOn;
+    }
+
     public void toggle() {
         if (isPowered) {
             isOn = !isOn;

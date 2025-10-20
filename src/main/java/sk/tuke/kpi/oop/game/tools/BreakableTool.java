@@ -1,14 +1,14 @@
-package sk.tuke.kpi.oop.game;
+package sk.tuke.kpi.oop.game.tools;
 
-import sk.tuke.kpi.gamelib.graphics.Animation;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
+import sk.tuke.kpi.gamelib.graphics.Animation;
 
-public class Hammer extends AbstractActor {
+public class BreakableTool extends AbstractActor {
     private int remainingUses;
     private Animation hammerAnimation;
 
-    public Hammer() {
-        this.remainingUses = 1;
+    public BreakableTool(int remainingUses) {
+        this.remainingUses = remainingUses;
         hammerAnimation = new Animation("sprites/hammer.png");
         setAnimation(hammerAnimation);
     }
