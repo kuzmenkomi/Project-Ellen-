@@ -7,18 +7,31 @@ import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
-public class Cooler extends AbstractActor {
+public class Cooler extends AbstractActor implements Switchable  {
     private boolean isOn;
-    private final Animation fanAnimation;
+    private final Animation coolerAnimation;
     private Reactor reactor;
 
     public Cooler(Reactor reactor) {
         this.reactor = reactor;
-        fanAnimation = new Animation("sprites/fan.png", 32, 32, 0.2f);
-        setAnimation(fanAnimation);
-        fanAnimation.pause();
+        coolerAnimation = new Animation("sprites/fan.png", 32, 32, 0.2f);
+        setAnimation(coolerAnimation);
+        coolerAnimation.pause();
         isOn = false;
     }
+
+    @Override
+    public void turnOn() {
+        isOn = true;
+        coolerAnimation.play();
+    }
+
+    @Override
+    public void turnOff() {
+        isOn = false;
+        coolerAnimation.pause();
+    }
+
 
     public Reactor getReactor() {
         return reactor;

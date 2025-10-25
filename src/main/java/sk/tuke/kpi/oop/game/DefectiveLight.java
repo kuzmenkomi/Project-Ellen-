@@ -10,7 +10,7 @@ import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
 
 public class DefectiveLight extends Light {
-    private Disposable disposeLight;
+    private Disposable brokenEffect;
     private boolean repaired;
 
     public DefectiveLight() {
@@ -21,11 +21,11 @@ public class DefectiveLight extends Light {
     @Override
     public void addedToScene(@NotNull Scene scene) {
         super.addedToScene(scene);
-        this.disposeLight = new Loop<>(new Invoke<Actor>(this::changeLight)).scheduleFor(this);
+        this.brokenEffect = new Loop<>(new Invoke<Actor>(this::changeLight)).scheduleFor(this);
     }
 
     public void breakLight() {
-        this.disposeLight = new Loop<>(new Invoke<>(this::changeLight)).scheduleFor(this);
+        this.brokenEffect = new Loop<>(new Invoke<>(this::changeLight)).scheduleFor(this);
     }
 
     public void changeLight() {
@@ -36,14 +36,12 @@ public class DefectiveLight extends Light {
     }
 
     public boolean repair() {
-        if (disposeLight == null || repaired){
-            return false;
-        } else {
-            repaired = true;
-            disposeLight.dispose();
-        }
+        if (brokenEffect == null || repaired) return false;
 
-        this.disposeLight = new ActionSequence<>(new Wait<>(10), new Loop<>(new Invoke<>(this::toggle))).scheduleFor(this);
+        repaired = true;
+        brokenEffect.dispose();
+
+        this.brokenEffect = new ActionSequence<>(new Wait<>(10), new Loop<>(new Invoke<>(this::toggle))).scheduleFor(this);
         return true;
     }
 }

@@ -1,19 +1,23 @@
 package sk.tuke.kpi.oop.game.tools;
 
-import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.oop.game.Reactor;
 
-public class Hammer extends BreakableTool {
-    private final Animation hammerAnimation;
+public class Hammer extends BreakableTool<Reactor> {
+    public Hammer() {this(1);}
 
-    public Hammer() {
-        super(1);
-        hammerAnimation = new Animation("sprites/hammer.png");
+    public Hammer(int remainingUses) {
+        super(remainingUses);
+        Animation hammerAnimation = new Animation("sprites/hammer.png");
         setAnimation(hammerAnimation);
     }
 
     @Override
-    public void use() {
-        super.use(); // вызываем родительский метод
+    public void useWith(Reactor reactor) {
+        if (reactor == null) return;
+
+        if (reactor.repair()) {
+            super.useWith(reactor);
+        }
     }
 }
