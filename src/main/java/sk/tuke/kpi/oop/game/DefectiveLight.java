@@ -9,7 +9,7 @@ import sk.tuke.kpi.gamelib.actions.Invoke;
 import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
 
-public class DefectiveLight extends Light {
+public class DefectiveLight extends Light implements Repairable {
     private Disposable brokenEffect;
     private boolean repaired;
 

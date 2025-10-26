@@ -7,7 +7,6 @@ import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
 public class Helicopter extends AbstractActor {
-    private int positionX = 0, positionY = 0;
     private Animation down;
     private Animation up;
     private Animation left;

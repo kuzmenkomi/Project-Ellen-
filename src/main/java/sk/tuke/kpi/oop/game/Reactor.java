@@ -27,7 +27,6 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
         this.temperature = 0;
         this.damage = 0;
         this.isOn = false;
-        this.isOn = false;
         this.ReactorLight = null;
         devices = new HashSet<>();
 
@@ -55,9 +54,13 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
             damage = 100;
             turnOff();
         } else if (temperature > 4000) {
-            damage = Math.max(damage, (int) Math.floor((temperature - 2000) / 25.0));
+            damage = Math.max(damage, (int) Math.floor((temperature - 2000) / 40.0));
         } else if (temperature > 2000) {
-            damage = Math.max(damage, (int) Math.floor((temperature - 2000) / 50.0));
+            damage = Math.max(damage, (int) Math.floor((temperature - 2000) / 100.0));
+        }
+        if (damage > 100) {
+            damage = 100;
+            turnOff();
         }
 
         updateAnimation();
@@ -92,8 +95,10 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
     public boolean isOn() {return isOn;}
 
     public void turnOn() {
-        this.isOn = true;
-        updateAnimation();
+        if (damage < 100) {
+            this.isOn = true;
+            updateAnimation();
+        }
     }
 
     public void turnOff() {
@@ -107,16 +112,10 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
         }
     }
 
-    private void updateElectricityFlow() {
-        if (ReactorLight != null) {
-            ReactorLight.setElectricityFlow(isOn && damage != 100);
-        }
-    }
-
     public boolean repair() {
-        if ((damage > 0) && (damage < 100)) {
-            temperature = ((damage - 50) * 40) + 2000;
+        if (damage > 0 && damage < 100) {
             damage = Math.max(damage - 50, 0);
+            temperature = (damage * 40) + 2000;
             updateAnimation();
             return true;
         }
@@ -124,7 +123,7 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
     }
 
     public boolean isLaunched() {
-        return isOn && ReactorLight != null && ReactorLight.getOn() && ReactorLight.getPower();
+        return isOn && ReactorLight != null && ReactorLight.isOn() && ReactorLight.isPower();
     }
 
     @Override
