@@ -48,6 +48,12 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
     public void increaseTemperature(int increment) {
         if (increment < 0 || damage >= 100 || !isOn) return;
 
+        logic(increment);
+        calculateDamage();
+        updateAnimation();
+    }
+
+    private void logic(int increment) {
         if (damage < 33) {
             temperature += increment;
         } else if (damage <= 66) {
@@ -55,7 +61,9 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
         } else {
             temperature += increment * 2;
         }
+    }
 
+    private void calculateDamage() {
         if (temperature >= 6000) {
             damage = 100;
             turnOff();
@@ -64,11 +72,11 @@ public class Reactor extends AbstractActor implements Switchable, Repairable {
         } else if (temperature > 2000) {
             damage = Math.max(damage, (int) Math.floor((temperature - 2000) / 100.0));
         }
+
         if (damage > 100) {
             damage = 100;
             turnOff();
         }
-        updateAnimation();
     }
 
     public void decreaseTemperature(int decrement) {
