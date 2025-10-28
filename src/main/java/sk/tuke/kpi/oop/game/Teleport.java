@@ -60,8 +60,8 @@ public class Teleport extends AbstractActor {
             if (this.intersects(player)) {
                 if (playerInside(player) && !active) {
                     active = true;
-                    destination.teleportPlayer(player);
                     destination.active = true;
+                    destination.teleportPlayer(player);
                 }
             } else {
                 active = false;
