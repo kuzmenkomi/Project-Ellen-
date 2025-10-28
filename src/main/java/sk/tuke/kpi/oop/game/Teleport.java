@@ -10,6 +10,7 @@ import sk.tuke.kpi.gamelib.graphics.Animation;
 
 public class Teleport extends AbstractActor {
     private Teleport destination;
+    private boolean onTeleport;
 
     public Teleport(Teleport destination) {
         this.destination = destination;
@@ -26,27 +27,26 @@ public class Teleport extends AbstractActor {
     }
 
     public void teleportPlayer(Player player) {
-        if (this.destination == null || getScene() == null || player == null) return;
+        if (player == null || destination == null || getScene() == null) return;
 
-        int playerCenterX = player.getPosX() + player.getWidth() / 2;
-        int playerCenterY = player.getPosY() + player.getHeight() / 2;
+        if (!this.intersects(player)) {
+            onTeleport = false;return;}
+        if (onTeleport) return;
 
-        int teleportCenterX = this.getPosX() + this.getWidth() / 2;
-        int teleportCenterY = this.getPosY() + this.getHeight() / 2;
-
-        if ((playerCenterX == teleportCenterX) && (playerCenterY == teleportCenterY)) {
-            int targetX = destination.getPosX() + destination.getWidth() / 2 - player.getWidth() / 2;
-            int targetY = destination.getPosY() + destination.getHeight() / 2 - player.getHeight() / 2;
-
-            player.setPosition(targetX, targetY);
-            destination.teleportPlayer(player);
-        }
+        int posX = destination.getPosX() + destination.getWidth() / 2 - player.getWidth() / 2;
+        int posY = destination.getPosY() + destination.getHeight() / 2 - player.getHeight() / 2;
+        player.setPosition(posX, posY);
+        destination.onTeleport = true;
     }
 
     @Override
     public void addedToScene(@NotNull Scene scene) {
         super.addedToScene(scene);
-        Player player = getScene().getLastActorByType(Player.class);
-        new Loop<>(new Invoke<>(this::teleportPlayer)).scheduleFor(player);
+        new Loop<>(
+            new Invoke<>(() -> {
+                Player player = getScene().getFirstActorByType(Player.class);
+                teleportPlayer(player);
+            })
+        ).scheduleFor(this);
     }
 }
