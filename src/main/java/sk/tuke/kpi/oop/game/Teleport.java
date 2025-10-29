@@ -7,6 +7,7 @@ import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.framework.Player;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+
 import java.awt.Point;
 
 public class Teleport extends AbstractActor {
@@ -64,8 +65,10 @@ public class Teleport extends AbstractActor {
                     destination.teleportPlayer(player);
                 }
             } else {
-                active = false;
-                if (destination != null) destination.active = false;
+                if (!destination.intersects(player)) {
+                    active = false;
+                    destination.active = false;
+                }
             }
         })).scheduleFor(this);
     }
