@@ -17,7 +17,7 @@ public class Move<A extends Movable> implements Action<A> {
         this.duration = duration;
         this.direction = direction;
         started = false;
-        this.isDone = false;
+        isDone = false;
     }
     public Move(Direction direction) {
         this.direction = direction;
