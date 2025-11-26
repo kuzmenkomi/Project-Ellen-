@@ -19,4 +19,6 @@ public class Energy extends AbstractActor implements Usable<Ripley> {
             if (getScene() != null) {getScene().removeActor(this);}
         }
     }
+
+    public Class<Ripley> getUsingActorClass() {return Ripley.class;}
 }

@@ -65,10 +65,14 @@ public class Move<A extends Movable> implements Action<A> {
             started = true;
         }
 
-        actor.setPosition(
-            actor.getPosX() + direction.getDx() * actor.getSpeed(),
-            actor.getPosY() + direction.getDy() * actor.getSpeed()
-        );
+        int oldX = actor.getPosX();
+        int oldY = actor.getPosY();
+        int newX = oldX + direction.getDx() * actor.getSpeed();
+        int newY = oldY + direction.getDy() * actor.getSpeed();
+
+        actor.setPosition(newX, newY);
+
+        if (actor.getScene() != null && actor.getScene().getMap().intersectsWithWall(actor)) actor.setPosition(oldX, oldY);
 
         if (duration > 0) {
             duration -= deltaTime;

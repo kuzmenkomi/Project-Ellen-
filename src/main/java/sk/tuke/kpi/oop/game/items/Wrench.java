@@ -21,6 +21,8 @@ public class Wrench extends BreakableTool<DefectiveLight> implements Collectible
         }
     }
 
+    public Class<DefectiveLight> getUsingActorClass() {return DefectiveLight.class;}
+
     public Wrench(int remainingUses) {
         super(remainingUses);
     }

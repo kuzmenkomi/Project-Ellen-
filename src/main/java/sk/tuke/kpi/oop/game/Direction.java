@@ -32,9 +32,7 @@ public enum Direction {
     }
 
     public int getDx() {return dx;}
-
     public int getDy() {return dy;}
-
     public float getAngle() {return angle;}
 
     public Direction combine(Direction other) {
