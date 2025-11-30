@@ -13,14 +13,13 @@ public enum Direction {
 
     static {
         NORTH.angle = 0;
-        EAST.angle = 270;
-        SOUTH.angle = 180;
-        WEST.angle = 90;
-        NORTHEAST.angle = 315;
-        SOUTHEAST.angle = 225;
-        SOUTHWEST.angle = 135;
         NORTHWEST.angle = 45;
-        NONE.angle = 0;
+        WEST.angle = 90;
+        SOUTHWEST.angle = 135;
+        SOUTH.angle = 180;
+        SOUTHEAST.angle = 225;
+        EAST.angle = 270;
+        NORTHEAST.angle = 315;
     }
 
     private float angle;
@@ -29,6 +28,19 @@ public enum Direction {
     Direction(int dx, int dy) {
         this.dx = dx;
         this.dy = dy;
+    }
+
+    public static Direction fromAngle(float angle) {
+        angle = (angle % 360 + 360) % 360;
+
+        if (angle >= 337.5 || angle < 22.5) return NORTH;       // 0°
+        if (angle >= 22.5 && angle < 67.5) return NORTHWEST;    // 45°
+        if (angle >= 67.5 && angle < 112.5) return WEST;        // 90°
+        if (angle >= 112.5 && angle < 157.5) return SOUTHWEST;  // 135°
+        if (angle >= 157.5 && angle < 202.5) return SOUTH;      // 180°
+        if (angle >= 202.5 && angle < 247.5) return SOUTHEAST;  // 225°
+        if (angle >= 247.5 && angle < 292.5) return EAST;       // 270°
+        return NORTHEAST; // 292.5-337.5° (315°)
     }
 
     public int getDx() {return dx;}

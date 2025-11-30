@@ -5,8 +5,8 @@ import sk.tuke.kpi.gamelib.Actor;
 public class LockedDoor extends Door {
     private boolean locked;
 
-    public LockedDoor() {
-        super();
+    public LockedDoor(String name, Orientation orientation){
+        super(name,orientation);
         locked = true;
     }
 

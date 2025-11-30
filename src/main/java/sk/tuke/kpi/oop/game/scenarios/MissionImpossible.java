@@ -10,7 +10,6 @@ import sk.tuke.kpi.oop.game.controllers.MovableController;
 import sk.tuke.kpi.oop.game.items.Energy;
 import sk.tuke.kpi.oop.game.items.FireExtinguisher;
 import sk.tuke.kpi.oop.game.openables.Door;
-import sk.tuke.kpi.oop.game.openables.LockedDoor;
 import sk.tuke.kpi.oop.game.items.AccessCard;
 import sk.tuke.kpi.oop.game.Locker;
 import sk.tuke.kpi.oop.game.Ventilator;
@@ -38,7 +37,7 @@ public class MissionImpossible implements SceneListener {
         scene.getMessageBus().subscribe(Door.DOOR_OPENED, (Ripley) -> ripley.decreaseEnergy());
         scene.getMessageBus().subscribe(Ripley.RIPLEY_DIED, (Ripley) -> moveControl.dispose());
         scene.getMessageBus().subscribe(Ripley.RIPLEY_DIED, (Ripley) -> keeperControl.dispose());
-        scene.getMessageBus().subscribe(Ventilator.VENTILATOR_REPAIRED, (Ripley) -> ripley.stopDecresingEnergy().dispose());
+        scene.getMessageBus().subscribe(Ventilator.VENTILATOR_REPAIRED, (Ripley) -> ripley.stopDecreasingEnergy().dispose());
     }
 
     private void energyUse(Scene scene) {
@@ -69,7 +68,10 @@ public class MissionImpossible implements SceneListener {
             switch (name) {
                 case "ellen":       return new Ripley();
                 case "energy":      return new Energy();
-                case "door":        return new LockedDoor();
+                case "door":
+                    Door.Orientation orientation = Door.Orientation.VERTICAL;
+                    if (type != null && "horizontal".equals(type)) orientation = Door.Orientation.HORIZONTAL;
+                    return new Door(name, orientation);
                 case "access card": return new AccessCard();
                 case "locker":      return new Locker();
                 case "ventilator":  return new Ventilator();

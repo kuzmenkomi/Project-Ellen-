@@ -1,5 +1,6 @@
 package sk.tuke.kpi.oop.game.openables;
 
+import org.jetbrains.annotations.NotNull;
 import sk.tuke.kpi.gamelib.Actor;
 import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
@@ -10,70 +11,66 @@ import sk.tuke.kpi.oop.game.items.Usable;
 
 public class Door extends AbstractActor implements Openable, Usable<Actor> {
     public static final Topic<Door> DOOR_OPENED = Topic.create("door opened", Door.class);
-    public static final Topic<Door> DOOR_CLOSED = Topic.create("door closed", Door.class);
 
+    public enum Orientation { VERTICAL, HORIZONTAL }
+    private final Orientation orientation;
+    private boolean isOpened;
     private Animation doorAnim;
-    boolean isOpened;
 
-    public Door() {
-        doorAnim = new Animation("sprites/vdoor.png", 16, 32, 0.1f, Animation.PlayMode.ONCE);
+    public Door(String name, Orientation orientation) {
+        super(name);
+        this.orientation = orientation;
+        this.isOpened = false;
+
+        String doorPicture = orientation == Orientation.VERTICAL ? "sprites/vdoor.png" : "sprites/hdoor.png";
+        int width = orientation == Orientation.VERTICAL ? 16 : 32;
+        int height = orientation == Orientation.VERTICAL ? 32 : 16;
+
+        doorAnim = new Animation(doorPicture, width, height, 0.1f, Animation.PlayMode.LOOP_PINGPONG);
         setAnimation(doorAnim);
-        getAnimation().stop();
-        isOpened = false;
+        doorAnim.stop();
     }
 
-    public void open() {
+    @Override public void open() {
         if (isOpened) return;
         isOpened = true;
-
-        // Убираем стены
-        Scene scene = getScene();
-        if (scene != null) {
-            int x = getPosX() / 16;
-            int y = getPosY() / 16;
-            scene.getMap().getTile(x, y).setType(MapTile.Type.CLEAR);
-            scene.getMap().getTile(x, y + 1).setType(MapTile.Type.CLEAR);
-
-            scene.getMessageBus().publish(DOOR_OPENED, this);
-        }
-        getAnimation().setPlayMode(Animation.PlayMode.ONCE);
+        removeWalls();
+        getScene().getMessageBus().publish(DOOR_OPENED, this);
         getAnimation().play();
     }
 
-    public void close() {
+    @Override public void close() {
         if (!isOpened) return;
         isOpened = false;
-
-        // Ставим стены
-        Scene scene = getScene();
-        if (scene != null) {
-            int x = getPosX() / 16;
-            int y = getPosY() / 16;
-            scene.getMap().getTile(x, y).setType(MapTile.Type.WALL);
-            scene.getMap().getTile(x, y + 1).setType(MapTile.Type.WALL);
-
-            scene.getMessageBus().publish(DOOR_CLOSED, this);
-        }
+        addWalls();
         getAnimation().setPlayMode(Animation.PlayMode.ONCE_REVERSED);
         getAnimation().play();
     }
 
-    public boolean isOpen(){return isOpened;}
-
-    @Override
-    public void useWith(Actor actor) {
-        Runnable action = isOpened ? this::close : this::open;
-        action.run();
+    private void updateWalls(MapTile.Type type) {
+        if (getScene() == null) return;
+        int posX = getPosX() / 16;
+        int posY = getPosY() / 16;
+        if (orientation == Orientation.VERTICAL) {
+            getScene().getMap().getTile(posX, posY).setType(type);
+            getScene().getMap().getTile(posX, posY + 1).setType(type);
+        } else {
+            getScene().getMap().getTile(posX, posY).setType(type);
+            getScene().getMap().getTile(posX + 1, posY).setType(type);
+        }
     }
 
-    @Override
-    public void addedToScene(Scene scene) {
+    private void addWalls()    { updateWalls(MapTile.Type.WALL); }
+    private void removeWalls() { updateWalls(MapTile.Type.CLEAR); }
+
+    @Override public void addedToScene(@NotNull Scene scene) {
         super.addedToScene(scene);
-        getScene().getMap().getTile(this.getPosX() /16, this.getPosY() / 16).setType(MapTile.Type.WALL);
-        getScene().getMap().getTile(this.getPosX() /16, this.getPosY() / 16+1 ).setType(MapTile.Type.WALL);
+        addWalls();
     }
 
-    public Class<Actor> getUsingActorClass() {
-        return Actor.class;
-    }
+    @Override public void useWith(Actor actor) { if (isOpened) close(); else open(); }
+    @Override public Class<Actor> getUsingActorClass() { return Actor.class; }
+
+    public Door(Orientation orientation) { this(null, orientation); }
+    public boolean isOpen() { return isOpened; }
 }

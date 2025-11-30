@@ -13,14 +13,17 @@ import sk.tuke.kpi.oop.game.Movable;
 import sk.tuke.kpi.oop.game.Keeper;
 import sk.tuke.kpi.oop.game.items.Backpack;
 import sk.tuke.kpi.gamelib.GameApplication;
+import sk.tuke.kpi.oop.game.weapons.Firearm;
+import sk.tuke.kpi.oop.game.weapons.Gun;
 
-public class Ripley extends AbstractActor implements Movable, Keeper {
+public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Armed {
     public static final Topic<Ripley> RIPLEY_DIED = Topic.create("ripley died", Ripley.class);
 
     private int speed;
-    private int energy;
+    private Health health;
     private int ammo;
     private Backpack backpack;
+    private Firearm gun;
     private Animation ripleyAnim;
     private Animation dieAnim;
     private boolean dead = false;
@@ -28,7 +31,11 @@ public class Ripley extends AbstractActor implements Movable, Keeper {
 
     public Ripley() {
         super("Ellen");
-        energy = 55;
+        health = new Health(100, 100);
+        health.onFatigued(() -> {
+            die();
+        });
+        gun = new Gun(50, 100);
         ammo = 100;
         speed = 2;
         backpack = new Backpack("Ripley's backpack",10);
@@ -55,24 +62,19 @@ public class Ripley extends AbstractActor implements Movable, Keeper {
 
     public int getSpeed() {return this.speed;}
 
-    public int getEnergy() {return energy;}
-    public void setEnergy(int energy) {
-        this.energy = energy;
-        if (this.energy <= 0 && !dead) die();
-    }
 
     public void decreaseEnergy() {
         if (dead) return;  // Уже мертвая — ничего не делаем
 
-        stopDecresingEnergy();
+        stopDecreasingEnergy();
 
         disposable = new Loop<>(
             new ActionSequence<>(
                 new Invoke<>(() -> {
-                    if (getEnergy() <= 5) {
-                        setEnergy(0);
+                    if (health.getValue() <= 5) {
+                        health.exhaust();
                     } else {
-                        setEnergy(getEnergy() - 5);
+                        health.drain(5);
                     }
                 }),
                 new Wait<>(1)
@@ -80,7 +82,7 @@ public class Ripley extends AbstractActor implements Movable, Keeper {
         ).scheduleFor(this);
     }
 
-    public Disposable stopDecresingEnergy() {
+    public Disposable stopDecreasingEnergy() {
         if (disposable != null) disposable.dispose();
         Disposable temp = disposable;
         disposable = null;
@@ -101,7 +103,22 @@ public class Ripley extends AbstractActor implements Movable, Keeper {
     public void showRipleyState() {
         int windowHeight = getScene().getGame().getWindowSetup().getHeight();
         int yTextPos = windowHeight - GameApplication.STATUS_LINE_OFFSET;
-        getScene().getGame().getOverlay().drawText("Energy " + this.getEnergy(), 120, yTextPos);
+        getScene().getGame().getOverlay().drawText("Energy " + this.health.getValue(), 120, yTextPos);
         getScene().getGame().getOverlay().drawText("Ammo " + this.getAmmo(), 240, yTextPos);
+    }
+
+    @Override
+    public Health getHealth() {
+        return health;
+    }
+
+    @Override
+    public Firearm getFirearm() {
+        return gun;
+    }
+
+    @Override
+    public void setFirearm(Firearm weapon) {
+        this.gun = weapon;
     }
 }

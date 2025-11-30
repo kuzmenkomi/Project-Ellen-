@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Ventilator extends AbstractActor implements Repairable {
     public static final Topic<Ventilator> VENTILATOR_REPAIRED = Topic.create("ventilator repaired", Ventilator.class);
 
-    private Animation ventilatorAnimation;
+    private Animation ventilatorAnim;
     boolean isDamaged;
 
     private void damageVentilator() {
@@ -18,7 +18,8 @@ public class Ventilator extends AbstractActor implements Repairable {
     }
 
     public Ventilator() {
-        setAnimation(new Animation("sprites/ventilator.png", 32, 32,  0.1f, Animation.PlayMode.LOOP_PINGPONG));
+        ventilatorAnim = new Animation("sprites/ventilator.png", 32, 32,  0.1f, Animation.PlayMode.LOOP_PINGPONG);
+        setAnimation(ventilatorAnim);
         damageVentilator();
     }
 

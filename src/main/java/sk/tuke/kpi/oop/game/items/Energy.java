@@ -2,23 +2,22 @@ package sk.tuke.kpi.oop.game.items;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.characters.Ripley;
+import sk.tuke.kpi.oop.game.characters.Alive;
 
-import java.util.Objects;
-
-public class Energy extends AbstractActor implements Usable<Ripley> {
+public class Energy extends AbstractActor implements Usable<Alive> {
     public Energy() {
         Animation energyAnim = new Animation("sprites/energy.png", 16, 16);
         setAnimation(energyAnim);
     }
 
     @Override
-    public void useWith(Ripley ripley) {
-        if (ripley != null && ripley.getEnergy() < 100) {
-            ripley.setEnergy(100);
+    public void useWith(Alive aliveActor) {
+        if (aliveActor != null && aliveActor.getHealth().getValue() < 100) {
+            aliveActor.getHealth().restore();
             if (getScene() != null) {getScene().removeActor(this);}
         }
     }
 
-    public Class<Ripley> getUsingActorClass() {return Ripley.class;}
+    @Override
+    public Class<Alive> getUsingActorClass() {return Alive.class;}
 }
