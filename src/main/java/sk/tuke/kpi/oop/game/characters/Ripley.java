@@ -1,12 +1,12 @@
 package sk.tuke.kpi.oop.game.characters;
 
-import sk.tuke.kpi.gamelib.*;
+import sk.tuke.kpi.gamelib.Disposable;
 import sk.tuke.kpi.gamelib.actions.ActionSequence;
 import sk.tuke.kpi.gamelib.actions.Invoke;
 import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
-import sk.tuke.kpi.gamelib.graphics.*;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
+import sk.tuke.kpi.gamelib.graphics.Animation;
 import sk.tuke.kpi.gamelib.messages.Topic;
 import sk.tuke.kpi.oop.game.Direction;
 import sk.tuke.kpi.oop.game.Movable;
@@ -32,9 +32,7 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Arm
     public Ripley() {
         super("Ellen");
         health = new Health(100, 100);
-        health.onFatigued(() -> {
-            die();
-        });
+        health.onFatigued(() -> {die();});
         gun = new Gun(50, 100);
         ammo = 100;
         speed = 2;
@@ -64,7 +62,7 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Arm
 
 
     public void decreaseEnergy() {
-        if (dead) return;  // Уже мертвая — ничего не делаем
+        if (dead) return;
 
         stopDecreasingEnergy();
 
@@ -91,7 +89,6 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Arm
 
     public int getAmmo() {return ammo;}
     public void setAmmo(int ammo) {this.ammo = ammo;}
-
     public Backpack getBackpack() {return backpack;}
 
     private void die() {
@@ -108,17 +105,9 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Arm
     }
 
     @Override
-    public Health getHealth() {
-        return health;
-    }
-
+    public Health getHealth() {return health;}
     @Override
-    public Firearm getFirearm() {
-        return gun;
-    }
-
+    public Firearm getFirearm() {return gun;}
     @Override
-    public void setFirearm(Firearm weapon) {
-        this.gun = weapon;
-    }
+    public void setFirearm(Firearm weapon) {this.gun = weapon;}
 }

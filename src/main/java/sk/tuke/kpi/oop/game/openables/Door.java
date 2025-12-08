@@ -15,7 +15,6 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
     public enum Orientation { VERTICAL, HORIZONTAL }
     private final Orientation orientation;
     private boolean isOpened;
-    private Animation doorAnim;
 
     public Door(String name, Orientation orientation) {
         super(name);
@@ -25,8 +24,7 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
         String doorPicture = orientation == Orientation.VERTICAL ? "sprites/vdoor.png" : "sprites/hdoor.png";
         int width = orientation == Orientation.VERTICAL ? 16 : 32;
         int height = orientation == Orientation.VERTICAL ? 32 : 16;
-
-        doorAnim = new Animation(doorPicture, width, height, 0.1f, Animation.PlayMode.LOOP_PINGPONG);
+        Animation doorAnim = new Animation(doorPicture, width, height, 0.1f, Animation.PlayMode.LOOP_PINGPONG);
         setAnimation(doorAnim);
         doorAnim.stop();
     }
