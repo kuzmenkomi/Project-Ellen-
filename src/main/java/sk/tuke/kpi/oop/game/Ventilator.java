@@ -10,7 +10,7 @@ public class Ventilator extends AbstractActor implements Repairable {
     public static final Topic<Ventilator> VENTILATOR_REPAIRED = Topic.create("ventilator repaired", Ventilator.class);
 
     private Animation ventilatorAnim;
-    boolean isDamaged;
+    private boolean isDamaged;
 
     private void damageVentilator() {
         getAnimation().stop();
