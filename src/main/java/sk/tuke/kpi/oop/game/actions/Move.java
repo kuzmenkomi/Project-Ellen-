@@ -53,7 +53,7 @@ public class Move<A extends Movable> implements Action<A> {
 
     public void stop() {
         isDone = true;
-        actor.stoppedMoving();
+        if (actor != null) actor.stoppedMoving();
     }
 
     @Override
@@ -64,6 +64,8 @@ public class Move<A extends Movable> implements Action<A> {
             actor.startedMoving(direction);
             started = true;
         }
+
+        if (duration == 0) {stop();return;}
 
         int oldX = actor.getPosX();
         int oldY = actor.getPosY();

@@ -11,6 +11,7 @@ import sk.tuke.kpi.oop.game.items.Usable;
 
 public class Door extends AbstractActor implements Openable, Usable<Actor> {
     public static final Topic<Door> DOOR_OPENED = Topic.create("door opened", Door.class);
+    public static final Topic<Door> DOOR_CLOSED = Topic.create("door closed", Door.class);
 
     public enum Orientation { VERTICAL, HORIZONTAL }
     private final Orientation orientation;
@@ -43,6 +44,7 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
         addWalls();
         getAnimation().setPlayMode(Animation.PlayMode.ONCE_REVERSED);
         getAnimation().play();
+        getScene().getMessageBus().publish(DOOR_CLOSED, this);
     }
 
     private void updateWalls(MapTile.Type type) {
