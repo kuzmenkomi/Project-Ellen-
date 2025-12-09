@@ -74,11 +74,19 @@ public class Move<A extends Movable> implements Action<A> {
 
         actor.setPosition(newX, newY);
 
-        if (actor.getScene() != null && actor.getScene().getMap().intersectsWithWall(actor)) actor.setPosition(oldX, oldY);
+        boolean wallCollision = false;
+        if (actor.getScene() != null) {
+            wallCollision = actor.getScene().getMap().intersectsWithWall(actor);
+
+            if (wallCollision) {
+                actor.setPosition(oldX, oldY);
+                actor.collidedWithWall();
+            }
+        }
 
         if (duration > 0) {
             duration -= deltaTime;
-            if (duration <= 0) stop();
+            if (duration <= 0) {stop();}
         }
     }
 }
