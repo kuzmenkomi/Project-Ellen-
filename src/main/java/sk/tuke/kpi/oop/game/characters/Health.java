@@ -12,7 +12,7 @@ public class Health {
     public Health(int initialHealth) {this(initialHealth, initialHealth);}
 
     public Health(int initialHealth, int maxHealth) {
-        this.currentHealth = Math.min(initialHealth, maxHealth);
+        this.currentHealth = initialHealth;
         this.maxHealth = maxHealth;
         this.effects = new ArrayList<>();
         this.exhausted = false;
